@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Введите PIN-код</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --muted:#9aa0a6;
+      --border:#e6e6e6;
+      --accent:#0b73ff;
+      --btn-bg:#f0f0f0;
+      --btn-text:#999;
+      --card-bg:#f7f7f9;
+      font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      background:var(--bg);
+      color:#111;
+    }
+
+    .wrap{
+      max-width:760px;
+      margin:0 auto;
+      padding:28px 20px 48px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      min-height:100vh;
+      box-sizing:border-box;
+    }
+
+    header{
+      width:100%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:28px;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo img{ height:100px; width:auto; display:block; }
+
+    .lang{
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:#fff;
+      border:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    h1{
+      margin:8px 0 22px;
+      font-size:22px;
+      text-align:center;
+      font-weight:700;
+    }
+
+    .pin-row{
+      display:flex;
+      gap:12px;
+      margin-bottom:18px;
+    }
+
+    .digit{
+      width:66px;
+      height:66px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      background:#fff;
+      box-shadow:0 1px 0 rgba(0,0,0,0.02) inset;
+    }
+
+    /* Hidden real inputs that take focus */
+    .hidden-inputs{
+      position:relative;
+      display:flex;
+      gap:12px;
+    }
+    .hidden-inputs input{
+      position:relative;
+      width:66px;
+      height:66px;
+      opacity:0;
+      background:transparent;
+      border:none;
+      outline:none;
+      text-align:center;
+      font-size:28px;
+      caret-color:transparent;
+    }
+ 
+  
+
+    a.open-btn{
+      width:100%;
+      max-width:600px;
+      padding:14px 18px;
+      margin-top:6px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--btn-bg);
+      color:var(--btn-text);
+      font-weight:600;
+      font-size:16px;
+      cursor:not-allowed;
+    }
+    a.open-btn.enabled{
+      background:var(--accent);
+      color:#fff;
+      cursor:pointer;
+      border: none;
+    }
+   a {
+        width: 600px !important;
+    }
+    /* Hint card */
+    .hint{
+      margin-top:44px;
+      width:100%;
+      max-width:720px;
+      display:flex;
+      gap:18px;
+      align-items:center;
+      background:var(--card-bg);
+      padding:12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      box-sizing:border-box;
+    }
+
+    .hint .doc{
+      width:48%;
+      min-height:76px;
+      background:#fff;
+      border-radius:8px;
+      border:1px dashed #e0e0e0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px;
+      box-sizing:border-box;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .hint .explain{
+      width:52%;
+      padding:12px;
+      box-sizing:border-box;
+      font-size:15px;
+      color:#222;
+    }
+
+    .pill{
+      margin-top:10px;
+      display:inline-block;
+      background:#dff0ff;
+      padding:10px 16px;
+      border-radius:10px;
+      font-weight:700;
+      font-size:22px;
+      color:#0b3f7a;
+    }
+
+    /* Small screens */
+    @media (max-width:520px){
+      .digit, .hidden-inputs input { width:56px; height:56px; font-size:24px; }
+      .wrap{ padding:20px; }
+      .hint{ flex-direction:column; gap:12px; }
+      .hint .doc, .hint .explain { width:100%;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <header>
+      <div class="logo">
+        <!-- Замените src на ваш логотип -->
+        <img src="https://uzinfocom.uz/media/project-media/0_L_e2Uz5G4.png" alt="DMED Documents">
+      </div>
+      <div class="lang" aria-hidden="true">
+        <!-- маленький флаг -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Russia.svg/2560px-Flag_of_Russia.svg.png" alt="RU" style="height:18px;width:auto;">
+      </div>
+    </header>
+
+    <h1>Введите PIN-код для просмотра документа</h1>
+
+    <!-- Визуальные квадраты -->
+    <div class="pin-row" aria-hidden="true">
+      <div class="digit" id="d0"></div>
+      <div class="digit" id="d1"></div>
+      <div class="digit" id="d2"></div>
+      <div class="digit" id="d3"></div>
+    </div>
+
+    <!-- Скрытые полные inputs для удобства (мобильная клавиатура) -->
+    <form id="pinForm" onsubmit="return false;" aria-label="PIN-код">
+      <div class="hidden-inputs" role="group" aria-label="Числовые поля PIN">
+        <input inputmode="numeric" pattern="\d*" maxlength="1" id="i0" autocomplete="one-time-code" aria-label="цифра 1">
+        <input inputmode="numeric" pattern="\d*" maxlength="1" id="i1" autocomplete="one-time-code" aria-label="цифра 2">
+        <input inputmode="numeric" pattern="\d*" maxlength="1" id="i2" autocomplete="one-time-code" aria-label="цифра 3">
+        <input inputmode="numeric" pattern="\d*" maxlength="1" id="i3" autocomplete="one-time-code" aria-label="цифра 4">
+      </div>
+
+      <a href="./page.html" id="openBtn" class="open-btn" disabled>Открыть</a>
+    </form>
+
+    <div class="hint" aria-hidden="false">
+      <div class="doc">
+        <!-- Здесь можно вставить миниатюру документа с QR -->
+        <div style="text-align:center;">
+          <div style="font-size:13px;color:var(--muted); margin-bottom:8px;">Миниатюра документа</div>
+          <div style="width:80%;height:36px;background:#efefef;border-radius:6px;display:inline-block;"></div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <div style="font-weight:600; margin-bottom:6px;">PIN-код размещается рядом с QR-кодом документа</div>
+        <div class="pill" id="examplePin">1234</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JS: заполняем визуальные квадраты и включаем кнопку, когда 4 цифры введены.
+    const inputs = Array.from(document.querySelectorAll('.hidden-inputs input'));
+    const digits = inputs.map((_,i)=>document.getElementById('d'+i));
+    const openBtn = document.getElementById('openBtn');
+
+    function updateUI(){
+      const values = inputs.map(i=>i.value || '');
+      values.forEach((v, idx) => {
+        digits[idx].textContent = v ? '•' : ''; // для приватности отображаем •
+      });
+
+      const full = values.every(v=>v.match(/^\d$/));
+      if (full) {
+        openBtn.disabled = false;
+        openBtn.classList.add('enabled');
+        openBtn.style.cursor = 'pointer';
+      } else {
+        openBtn.disabled = true;
+        openBtn.classList.remove('enabled');
+        openBtn.style.cursor = 'not-allowed';
+      }
+    }
+
+    // автофокус и переход по вводу/удалению
+    inputs.forEach((inp, idx) => {
+      inp.addEventListener('input', (e) => {
+        // оставляем только цифру
+        inp.value = (inp.value || '').replace(/\D/g, '').slice(0,1);
+        if (inp.value && idx < inputs.length-1) inputs[idx+1].focus();
+        updateUI();
+      });
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !inp.value && idx > 0) {
+          inputs[idx-1].focus();
+        }
+      });
+      // при клике выбираем (для удобства на десктопе)
+      inp.addEventListener('focus', () => { inp.select(); });
+    });
+
+    // клик по визуальным квадратикам — перенос фокуса на первый пустой input
+    document.querySelectorAll('.digit').forEach((el, idx) => {
+      el.addEventListener('click', () => {
+        // найти первый пустой
+        const firstEmpty = inputs.find(i=>!i.value) || inputs[inputs.length-1];
+        firstEmpty.focus();
+      });
+    });
+
+    // открыть — пример обработки
+    openBtn.addEventListener('click', () => {
+      if (openBtn.disabled) return;
+      const pin = inputs.map(i=>i.value).join('');
+    });
+
+    // установить фокус на первый input при загрузке
+    window.addEventListener('load', () => {
+      setTimeout(()=>inputs[0].focus(), 200);
+    });
+  </script>
+</body>
+</html>
